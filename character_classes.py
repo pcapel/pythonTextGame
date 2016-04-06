@@ -8,6 +8,7 @@ class Character:
         self.health_max = health_max
         self.strength = strength
         self.dexterity = dexterity
+        self.stamina  = stamina
     def do_damage(self, enemy):
         first = round((random.gauss(self.level, 0.75) - random.gauss(enemy.level, 0.75) + (self.strength/3))-(enemy.dexterity/2))
         second = max(first, 0)
@@ -25,29 +26,29 @@ class Character:
 
 class Goblin(Character):
     def __init__(self, player, name):
-        Character.__init__(self, 1, 10, 10, 6, 5)
+        Character.__init__(self, 1, 10, 10, 6, 5, 1)
         self.name = name
         self.gives_exp = 150
 
 
 class Bear(Character):
     def __init__(self, player, name):
-        Character.__init__(self, 3, 15, 15, 12, 2)
+        Character.__init__(self, 3, 15, 15, 12, 2, 1)
         self.name = "Bear"
         self.gives_exp = 170
 
 class Demon(Character):
     def __init__(self, player, name):
-        Character.__init__(self, 10, 30, 30, 20, 15)
+        Character.__init__(self, 10, 30, 30, 20, 15, 1)
         self.name = name
         self.gives_exp = 1500
     
 
 class Player(Character):
     def __init__(self):
-        Character.__init__(self, 1, 10, 10, 8, 7)
+        Character.__init__(self, 1, 10, 10, 500, 70, 10)
         self.state = 'normal'
-        self.position = [0,1]
+        self.position = [0,10]
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
@@ -121,7 +122,7 @@ class Player(Character):
             print "%s encounters a %s!" % (self.name, self.enemy.name)
             self.state = 'fight'
         else:
-            if random.randint(0, 1): self.tired()
+            if random.randint(0, self.stamina): self.tired()
     def flee(self):
         if self.state != 'fight': print "%s runs in circles for a while." % self.name; self.tired()
         else:
