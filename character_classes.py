@@ -110,14 +110,14 @@ class Player(Character):
             elif self.position[1] > 10 and self.position[1] <=20:
                 if random.randint(1, 2) == 1:
                     self.enemy = Bear(self, "Bear")
-                if random.randint(1, 2) == 2:
+                else:
                     self.enemy = Goblin(self, "Goblin")
             elif self.position[1] > 20:
                 if random.randint(1, 3) == 1:
                     self.enemy = Demon(self, "Demon")
-                if random.randint(1, 3) == 2:
+                elif random.randint(1, 3) == 2:
                     self.enemy = Bear(self, "Bear")
-                if random.randint(1, 3) == 3:
+                else:
                     self.enemy = Goblin(self, "Goblin")
             print "%s encounters a %s!" % (self.name, self.enemy.name)
             self.state = 'fight'
