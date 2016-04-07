@@ -167,7 +167,13 @@ class Player(Character):
         self.item_to_use = raw_input("Which item?\n>")
         self.use(self.item_to_use)
     def view_bestiary(self):
-        print self.bestiary
+        for key in self.bestiary.keys():
+            print key
+        choice = raw_input("Which entry would you like to read?\n> ")
+        try:
+            print self.bestiary[choice]
+        except KeyError:
+            print "That doesn't seem to be a valid entry in your bestiary..."
     def assign_skill_points(self):
         if self.skill_points == 0:
             print "You have no remaining skill points!"
