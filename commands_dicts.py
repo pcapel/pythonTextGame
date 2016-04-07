@@ -21,4 +21,6 @@ Battle_Commands = {
     'flee': Player.flee,
     'inventory': Player.view_items,
     'help': Player.help,
+    'view bestiary': Player.view_bestiary,
+    'quit': Player.quit,
   }
