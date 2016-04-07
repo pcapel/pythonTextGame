@@ -44,12 +44,12 @@ class Player(Character):
     def __init__(self):
         Character.__init__(self, 1, 10, 10, 500, 70, 10)
         self.state = 'normal'
-        self.position = [0,10]
+        self.position = [0,1]
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
         self.bag_of_holding = Container("Potion,Potion,Potion")
-        self.bestiary = Container("")
+        self.bestiary = {}
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
         self.health = 0
@@ -86,6 +86,7 @@ class Player(Character):
                     self.health = self.health + 1
                 else: print "%s slept too much." % self.name; self.health = self.health - 1
     def explore(self):
+        import bestiary_dicts
         direction = raw_input("Forward (f)/Backward(b)\n>")
         if self.state != 'normal':
             print "%s is too busy right now!" % self.name
@@ -116,6 +117,11 @@ class Player(Character):
                 else:
                     self.enemy = Goblin(self, "Goblin")
             print "%s encounters a %s!" % (self.name, self.enemy.name)
+            if self.enemy.name not in self.bestiary:
+                print bestiary_dicts.Bestiary_Desc[self.enemy.name]
+                self.bestiary[self.enemy.name] = bestiary_dicts.Bestiary_Desc[self.enemy.name]
+            else:
+                print "View your bestiary for a description of this foe."
             self.state = 'fight'
         else:
             if random.randint(0, self.stamina): self.tired()
