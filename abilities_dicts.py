@@ -1,5 +1,5 @@
 
-magic_desc = {
+Magic_Desc = {
 	'Fire': "Utilize the power of the flame to incinerate your foes.",
 	'Ice': "Utilize the power of the frost to cause severe damage to foes.",
 	'Water': "Utilize the power of the seas to drown your foes.",
@@ -8,24 +8,21 @@ magic_desc = {
 	'Earth': "Utilize the power of  the earth cause severe damage to foes.",
 }
 
-special_skills_desc = {
+Special_Skills_Desc = {
 	'Medical': {
 
 	}
 }
 
-magic_level_reqs = {
+Magic_Level_Reqs = {
 	
 }
 
-magic_damage_key = {
+Magic_Damage_Key = {
 	
 }
 
-special_skills_values = {
+Special_Skills_Values = {
 	
 }
 
-exp_level_reqs = {
-	
-}

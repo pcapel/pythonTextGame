@@ -20,16 +20,13 @@ class Character:
             print "%s causes %d damage to %s!" % (self.name, damage, enemy.name)
         return enemy.health <= 0
     def encounter(self):
-        #initialize an enemy 
         pass
-
 
 class Goblin(Character):
     def __init__(self, player, name):
         Character.__init__(self, 1, 10, 10, 6, 5, 1)
         self.name = name
         self.gives_exp = 150
-
 
 class Bear(Character):
     def __init__(self, player, name):
@@ -42,7 +39,6 @@ class Demon(Character):
         Character.__init__(self, 10, 30, 30, 20, 15, 1)
         self.name = name
         self.gives_exp = 1500
-    
 
 class Player(Character):
     def __init__(self):
@@ -181,8 +177,6 @@ class Player(Character):
                 print "You have not assigned your skill points."
                 return
 
-
-
 class Container:
     def __init__(self, items):
         self.contents = items.rsplit(",")
@@ -195,8 +189,6 @@ class Map:
         self.type = type_of
         #maybe I don't need a full map, but a description
         #consider easier options for this.
-    
-
 
 class Magic:
     def fire(self):
