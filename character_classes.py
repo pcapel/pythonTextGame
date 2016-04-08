@@ -27,18 +27,21 @@ class Goblin(Character):
         Character.__init__(self, 1, 10, 10, 6, 5, 1)
         self.name = name
         self.gives_exp = 150
+        self.gives_skill_points = 1
 
 class Bear(Character):
     def __init__(self, player, name):
         Character.__init__(self, 3, 15, 15, 12, 2, 1)
         self.name = "Bear"
         self.gives_exp = 170
+        self.gives_skill_points = 2
 
 class Demon(Character):
     def __init__(self, player, name):
         Character.__init__(self, 10, 30, 30, 20, 15, 1)
         self.name = name
         self.gives_exp = 1500
+        self.gives_skill_points = 3
 
 class Player(Character):
     def __init__(self):
@@ -141,13 +144,13 @@ class Player(Character):
             if self.do_damage(self.enemy):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
                 self.exp += self.enemy.gives_exp
+                self.skill_points += self.enemy.gives_skill_points
                 self.enemy = None
                 self.state = 'normal'
             else: self.enemy_attacks()
             if self.exp >= self.exp_to_next:
                 self.health = self.health + 1
                 self.health_max = self.health_max + 1
-                self.skill_points += 1
                 self.level += 1
                 self.exp_to_next += self.level**2*100
                 print "%s feels stronger!" % self.name
