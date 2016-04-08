@@ -76,15 +76,16 @@ class Player(Character):
             print "%s can't rest now!" % self.name; self.enemy_attacks()
         else:
             print "%s rests." % self.name
-            if random.randint(0, 1) > 4:
-                self.enemy = Enemy(self)
-                print "%s is rudely awakened by %s!" % (self.name, self.enemy.name)
-                self.state = 'fight'
-                self.enemy_attacks()
-            else:
-                if self.health < self.health_max:
-                    self.health = self.health + 1
-                else: print "%s slept too much." % self.name; self.health = self.health - 1
+            #deprecated
+            #if random.randint(0, 1) > 4:
+                #self.enemy = Enemy(self)
+                #print "%s is rudely awakened by %s!" % (self.name, self.enemy.name)
+                #self.state = 'fight'
+                #self.enemy_attacks()
+            
+            if self.health < self.health_max:
+                self.health = self.health + 1
+            else: print "%s slept too much." % self.name; self.health = self.health - 1
     def explore(self):
         import bestiary_dicts
         direction = raw_input("Forward (f)/Backward(b)\n>")
