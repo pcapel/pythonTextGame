@@ -42,6 +42,7 @@ class Demon(Character):
         self.name = name
         self.gives_exp = 1500
         self.gives_skill_points = 3
+
 class Dragon(Character):
     def __init__(self, player, name):
         Character.__init__(self, 30, 55, 55 40, 30, 1)
@@ -112,6 +113,8 @@ class Player(Character):
                 print "That was not an accepted direction, please try again."
                 self.explore()
         if random.randint(0, 1):
+            #I think that I'm going to kill the enemy -> character inheritance and use an enemy superclass
+            #this whole "switch" could be a dictionary of methods within the superclass
             if self.position[1] <=10 :
                 self.enemy = Goblin(self, "Goblin")
             elif self.position[1] > 10 and self.position[1] <=20:
