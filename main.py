@@ -4,7 +4,7 @@ def make_player():
   p = character_classes.Player()
   p.name = raw_input("What is your character's name? ")
   print "(type help to get a list of actions)\n"
-  print "%s enters a dark cave, searching for adventure." % p.name
+  print "You enter a dark cave, searching for adventure.  Having heard that there is both great treasure, and great challenge, you enter seeking your destiny.  But be wary, young %s, for the way is dark, and the challenge that you face may be your last..." % p.name
   while(p.health > 0):
     line = raw_input("> ")
     args = line.split()
