@@ -24,13 +24,13 @@ class Items:
             """
             self.effect_what = "health"
             self.effect_value = 5
-    class Dick(ItemSuper):
+    class PhilterOfStrength(ItemSuper):
         """
         test class
         """
         def __init__(self):
             self.effect_what = "strength"
-            self.effect_value = 50
+            self.effect_value = 5
 
 class ItemGetter:
     def __init__(self):
@@ -64,12 +64,17 @@ class Character:
         """
         item arg is a class instance of the item
         """
-        effects_dict = item.effect()
-        attr_val = getattr(self, effects_dict['attribute'])
-        val = effects_dict['value']
-        if effects_dict['attribute'] == "health":
-            val = self.health_max - self.health
-        setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
+        try:
+            effects_dict = item.effect()
+            attr_val = getattr(self, effects_dict['attribute'])
+            val = effects_dict['value']
+            if effects_dict['attribute'] == "health":
+                val = self.health_max - self.health
+            setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
+        except AttributeError as e:
+            print "Be sure to specify the correct item!"
+
+
 
     def encounter(self):
         pass
@@ -80,6 +85,7 @@ class Goblin(Character):
         self.name = name
         self.gives_exp = 150
         self.gives_skill_points = 1
+        self.can_probe = True
 
 class Bear(Character):
     def __init__(self, player, name):
@@ -87,6 +93,7 @@ class Bear(Character):
         self.name = "Bear"
         self.gives_exp = 170
         self.gives_skill_points = 2
+        self.can_probe = True
 
 class Demon(Character):
     def __init__(self, player, name):
@@ -94,6 +101,7 @@ class Demon(Character):
         self.name = name
         self.gives_exp = 1500
         self.gives_skill_points = 3
+        self.can_probe = False
 
 class Dragon(Character):
     def __init__(self, player, name):
@@ -101,6 +109,7 @@ class Dragon(Character):
         self.name = name
         self.gives_exp = 30000
         self.gives_skill_points = 40
+        self.can_probe = False
 
 class Player(Character):
     def __init__(self):
@@ -114,7 +123,6 @@ class Player(Character):
         self.bag_of_holding = Container()
         self.bestiary = {}
         self.bag_of_holding.add_item("Potion")
-        self.bag_of_holding.add_item("Dick")
 
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
@@ -160,6 +168,7 @@ class Player(Character):
     def explore(self):
         import bestiary_dicts
         direction = raw_input("Forward (f)/Backward(b)\n>")
+        direction.lower()
         if self.state != 'normal':
             print "%s is too busy right now!" % self.name
             self.enemy_attacks()
@@ -248,20 +257,27 @@ class Player(Character):
     def probe(self):
         if self.state == 'normal':
             print "There doesn't seem to be anything to probe..."
-        else:
+        elif self.enemy.can_probe:
             print "%s has:\nHealth: %d out of %d\nStrength: %d\nDexterity: %d"%(self.enemy.name,self.enemy.health, self.enemy.health_max,self.enemy.strength, self.enemy.dexterity)
+        else:
+            print "It seems this enemy can resist your perception!"
 
 #need to look at all methods involving the inventory
     def view_items(self):
-        for key in self.bag_of_holding.contents:
-            print key
+        if self.bag_of_holding.contents == {}:
+            print "You have no items in your inventory!"
+        else:
+            for key in self.bag_of_holding.contents:
+                print key
 
     def use(self, item):
         self.use_item(item)
 
+
     def specify(self):
         item_to_use = raw_input("Which item?\n>")
         self.use(self.bag_of_holding.contents.get(item_to_use))
+        self.bag_of_holding.remove_item(item_to_use)
 
     def view_bestiary(self):
         for key in self.bestiary.keys():
@@ -300,6 +316,9 @@ class Container:
 
     def add_item(self, item):
         self.contents[item] = self.getter.make_item(item)
+
+    def remove_item(self, item):
+        del self.contents[item]
 
 class Map:
     def __init__(self, player, width, height, type_of):
