@@ -27,4 +27,4 @@ def make_player():
 
 
 if __name__ == "__main__":
-  make_player()
+    make_player()

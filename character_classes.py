@@ -1,5 +1,18 @@
 import random
-
+#allow calling class from strings
+get_class = lambda x: globals()[x]
+#--------------------------------------------------------------------------------------Item Classes
+class Potion:
+    def __init__(self):
+        self.value = 50
+        self.description = """
+        Potions are used when you find yourself in dire straits.\n
+        They return your vitality, and heal wounds that are superficial.\n
+        Heals 5 health.
+        """
+        def effect(self, attribute):
+            attribute = attribute + 5
+#------------------------------------------------------------------------------------Character Classes
 class Character:
     def __init__(self, level, health, health_max, strength, dexterity, stamina):
         self.name = ""
@@ -59,8 +72,9 @@ class Player(Character):
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
-        self.bag_of_holding = Container("Potion,Potion,Potion")
+        self.bag_of_holding = Container()
         self.bestiary = {}
+        self.bag_of_holding.add_item("Potion")
 
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
@@ -197,8 +211,10 @@ class Player(Character):
         else:
             print "%s has:\nHealth: %d out of %d\nStrength: %d\nDexterity: %d"%(self.enemy.name,self.enemy.health, self.enemy.health_max,self.enemy.strength, self.enemy.dexterity)
 
+#need to look at all methods involving the inventory
     def view_items(self):
-        print self.bag_of_holding.contents
+        for key in self.bag_of_holding.contents:
+            print key
 
     def use(self, item):
         self.bag_of_holding.use_item(item)
@@ -231,15 +247,22 @@ class Player(Character):
                 print "You have not assigned your skill points."
                 return
 
+#---------------------------------------------------------------------------------extra classes
+
 class Container:
-    def __init__(self, items):
-        self.contents = items.rsplit(",")
+    def __init__(self):
+        self.contents = {}
 
     def use_item(self, item):
-        import abilities_dicts
-        abilities_dicts.items_usage.item.effect()
-        self.contents.pop(self.contents.index(item))
+        try:
+            to_use = self.contents.get(item)
+        except Exception as e:
+            print "That item is not in your inventory!"
+        to_use.effect()
 
+
+    def add_item(self, item):
+        self.contents[item] = get_class(item)
 
 class Map:
     def __init__(self, player, width, height, type_of):

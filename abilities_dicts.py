@@ -1,3 +1,5 @@
+import item_functions as functs
+from main import p
 
 Basic_Stats_Desc = {
 	'Strength': """Strength is the measure of the power you are capable of generating.
@@ -33,17 +35,4 @@ Magic_Damage_Key = {
 
 Special_Skills_Values = {
 
-}
-
-items_usage = {
-	potion: {
-		value: 50,
-		description: """
-		Potions are used when you find yourself in dire straits.\n
-		They return your vitality, and heal wounds that are superficial.\n
-		Heals 5 health.
-		""",
-		effect: def potion(self):
-		self.health = self.health + 5,
-	}
 }
