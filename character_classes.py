@@ -54,15 +54,18 @@ class Player(Character):
     def __init__(self):
         Character.__init__(self, 1, 10, 10, 10, 7, 10)
         self.state = 'normal'
+        self.has_levelled = False
         self.position = [0,1]
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
         self.bag_of_holding = Container("Potion,Potion,Potion")
         self.bestiary = {}
+
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
         self.health = 0
+
     def help(self):
         import commands_dicts
         if self.state == 'normal':
@@ -71,6 +74,7 @@ class Player(Character):
         elif self.state == 'fight':
             for c in commands_dicts.Battle_Commands:
                 print c
+
     def status(self):
         print "%s's level: %d" % (self.name, self.level)
         print "%s's exp is %d and %d is needed to level up"%(self.name, self.exp, self.exp_to_next)
@@ -78,9 +82,11 @@ class Player(Character):
         print "%s's health: %d/%d" % (self.name, self.health, self.health_max)
         print "%s's strength: %d" % (self.name, self.strength)
         print "%s's dexterity: %d" % (self.name, self.dexterity)
+
     def tired(self):
         print "%s feels tired." % self.name
         self.health = max(1, self.health - 1)
+
     def rest(self):
         if self.state != 'normal':
             print "%s can't rest now!" % self.name; self.enemy_attacks()
@@ -96,6 +102,7 @@ class Player(Character):
             if self.health < self.health_max:
                 self.health = self.health + 1
             else: print "%s slept too much." % self.name; self.health = self.health - 1
+
     def explore(self):
         import bestiary_dicts
         direction = raw_input("Forward (f)/Backward(b)\n>")
@@ -103,12 +110,21 @@ class Player(Character):
             print "%s is too busy right now!" % self.name
             self.enemy_attacks()
         else:
-            if direction == "f":
+            if direction == "f" and self.position[1] >= 0:
                 print "%s explores deeper into the passage." % self.name
                 self.position = [0, self.position[1]+1]
             elif direction == "b":
-                print "%s travels back toward the entrance of the passage." % self.name
-                self.position = [0, self.position[1]-1]
+                if self.position[1] <= 0:
+                    print "%s, you are about to leave the cave.\n Are you certain of your decision?\n" % self.name
+                    choice = raw_input("Yes(Y)/No(N)\n>")
+                    if choice.lower() == "y":
+                        self.quit()
+                    else:
+                        print "You return to the darkness that promises glory."
+                        self.position = [0, self.position[1] + 1]
+                else:
+                    print "%s returns in the direction of obscurity and the mundane." % self.name
+                    self.position = [0, self.position[1] - 1]
             else:
                 print "That was not an accepted direction, please try again."
                 self.explore()
@@ -138,6 +154,7 @@ class Player(Character):
             self.state = 'fight'
         else:
             if random.randint(0, self.stamina): self.tired()
+
     def flee(self):
         if self.state != 'fight': print "%s runs in circles for a while." % self.name; self.tired()
         else:
@@ -146,6 +163,7 @@ class Player(Character):
                 self.enemy = None
                 self.state = 'normal'
             else: print "%s couldn't escape from %s!" % (self.name, self.enemy.name); self.enemy_attacks()
+
     def attack(self):
         if self.state != 'fight':
             print "%s swats the air, without notable results." % self.name; self.tired()
@@ -163,22 +181,32 @@ class Player(Character):
                 self.level += 1
                 self.exp_to_next += self.level**2*100
                 print "%s feels stronger!" % self.name
+                if not self.has_levelled:
+                    print "Be sure to check your status!"
+                    self.has_levelled = True
+
     def enemy_attacks(self):
         if self.enemy.do_damage(self): print "%s was slaughtered by %s!!!\nR.I.P." %(self.name, self.enemy.name)
+
     def locate(self):
         print "%s has travelled %d meters into the cave..." % (self.name, self.position[1])
+
     def probe(self):
         if self.state == 'normal':
             print "There doesn't seem to be anything to probe..."
         else:
             print "%s has:\nHealth: %d out of %d\nStrength: %d\nDexterity: %d"%(self.enemy.name,self.enemy.health, self.enemy.health_max,self.enemy.strength, self.enemy.dexterity)
+
     def view_items(self):
         print self.bag_of_holding.contents
+
     def use(self, item):
         self.bag_of_holding.use_item(item)
+
     def specify(self):
         self.item_to_use = raw_input("Which item?\n>")
         self.use(self.item_to_use)
+
     def view_bestiary(self):
         for key in self.bestiary.keys():
             print key
@@ -187,6 +215,7 @@ class Player(Character):
             print self.bestiary[choice]
         except KeyError:
             print "That doesn't seem to be a valid entry in your bestiary..."
+
     def assign_skill_points(self):
         if self.skill_points == 0:
             print "You have no remaining skill points!"
