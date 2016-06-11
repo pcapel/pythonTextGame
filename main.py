@@ -1,7 +1,7 @@
-import character_classes, commands_dicts
+import classes, commands_dicts
 
 def make_player():
-  p = character_classes.Player()
+  p = classes.Player()
   p.name = raw_input("What is your character's name? ")
   print "(type help to get a list of actions)\n"
   print "You enter a dark cave, searching for adventure.  Having heard that there is both great treasure, and great challenge, you enter seeking your destiny.  But be wary, young %s, for the way is dark, and the challenge that you face may be your last..." % p.name

@@ -1,4 +1,4 @@
-from character_classes import Player
+from classes import Player
 
 Commands = {
     'assign skill points': Player.assign_skill_points,

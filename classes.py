@@ -1,17 +1,28 @@
 import random
-#allow calling class from strings
-get_class = lambda x: globals()[x]
+
 #--------------------------------------------------------------------------------------Item Classes
-class Potion:
-    def __init__(self):
-        self.value = 50
-        self.description = """
-        Potions are used when you find yourself in dire straits.\n
-        They return your vitality, and heal wounds that are superficial.\n
-        Heals 5 health.
-        """
+class Items:
+    class Potion:
+        def __init__(self):
+            self.value = 50
+            self.description = """
+            Potions are used when you find yourself in dire straits.\n
+            They return your vitality, and heal wounds that are superficial.\n
+            Heals 5 health.
+            """
+            self.effect_what = "health"
+            self.effect_value = 5
         def effect(self, attribute):
-            attribute = attribute + 5
+            pass
+
+class ItemGetter:
+    def __init__(self):
+        pass
+    def make_item(self, item_name):
+        target_class = getattr(Items, item_name)
+        instance = target_class()
+        return instance
+
 #------------------------------------------------------------------------------------Character Classes
 class Character:
     def __init__(self, level, health, health_max, strength, dexterity, stamina):
@@ -252,17 +263,18 @@ class Player(Character):
 class Container:
     def __init__(self):
         self.contents = {}
+        self.getter = ItemGetter()
 
     def use_item(self, item):
         try:
             to_use = self.contents.get(item)
         except Exception as e:
             print "That item is not in your inventory!"
-        to_use.effect()
+        print to_use.value
 
 
     def add_item(self, item):
-        self.contents[item] = get_class(item)
+        self.contents[item] = self.getter.make_item(item)
 
 class Map:
     def __init__(self, player, width, height, type_of):
