@@ -1,11 +1,17 @@
 import random
 
 #--------------------------------------------------------------------------------------Item Classes
+class ItemSuper:
+    def effect(self):
+        return {
+        'attribute': self.effect_what,
+        'value': self.effect_value,
+        }
 class Items:
     """
     Items class allows the ItemGetter to work properly
     """
-    class Potion:
+    class Potion(ItemSuper):
         """
         Potions, yo
         """
@@ -18,11 +24,13 @@ class Items:
             """
             self.effect_what = "health"
             self.effect_value = 5
-        def effect(self):
-            return {
-            'attribute': self.effect_what,
-            'value': self.effect_value,
-            }
+    class Dick(ItemSuper):
+        """
+        test class
+        """
+        def __init__(self):
+            self.effect_what = "strength"
+            self.effect_value = 50
 
 class ItemGetter:
     def __init__(self):
@@ -57,7 +65,10 @@ class Character:
         item arg is a class instance of the item
         """
         effects_dict = item.effect()
+        attr_val = getattr(self, effects_dict['attribute'])
         val = effects_dict['value']
+        if effects_dict['attribute'] == "health":
+            val = self.health_max - self.health
         setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
 
     def encounter(self):
@@ -103,6 +114,7 @@ class Player(Character):
         self.bag_of_holding = Container()
         self.bestiary = {}
         self.bag_of_holding.add_item("Potion")
+        self.bag_of_holding.add_item("Dick")
 
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
