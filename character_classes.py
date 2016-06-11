@@ -14,9 +14,9 @@ class Character:
         second = max(first, 0)
         damage = min(second, enemy.health)
         enemy.health = enemy.health - damage
-        if damage == 0: 
+        if damage == 0:
             print "%s evades %s's attack." % (enemy.name, self.name)
-        else: 
+        else:
             print "%s causes %d damage to %s!" % (self.name, damage, enemy.name)
         return enemy.health <= 0
     def encounter(self):
@@ -45,7 +45,7 @@ class Demon(Character):
 
 class Dragon(Character):
     def __init__(self, player, name):
-        Character.__init__(self, 30, 55, 55 40, 30, 1)
+        Character.__init__(self, 30, 55, 55, 40, 30, 1)
         self.name = name
         self.gives_exp = 30000
         self.gives_skill_points = 40
@@ -71,7 +71,7 @@ class Player(Character):
         elif self.state == 'fight':
             for c in commands_dicts.Battle_Commands:
                 print c
-    def status(self): 
+    def status(self):
         print "%s's level: %d" % (self.name, self.level)
         print "%s's exp is %d and %d is needed to level up"%(self.name, self.exp, self.exp_to_next)
         print "%s's has %d skill points remaining"%(self.name, self.skill_points)
@@ -82,7 +82,7 @@ class Player(Character):
         print "%s feels tired." % self.name
         self.health = max(1, self.health - 1)
     def rest(self):
-        if self.state != 'normal': 
+        if self.state != 'normal':
             print "%s can't rest now!" % self.name; self.enemy_attacks()
         else:
             print "%s rests." % self.name
@@ -92,7 +92,7 @@ class Player(Character):
                 #print "%s is rudely awakened by %s!" % (self.name, self.enemy.name)
                 #self.state = 'fight'
                 #self.enemy_attacks()
-            
+
             if self.health < self.health_max:
                 self.health = self.health + 1
             else: print "%s slept too much." % self.name; self.health = self.health - 1
@@ -173,7 +173,7 @@ class Player(Character):
         else:
             print "%s has:\nHealth: %d out of %d\nStrength: %d\nDexterity: %d"%(self.enemy.name,self.enemy.health, self.enemy.health_max,self.enemy.strength, self.enemy.dexterity)
     def view_items(self):
-        print self.bag_of_holding.contents 
+        print self.bag_of_holding.contents
     def use(self, item):
         self.bag_of_holding.use_item(item)
     def specify(self):
