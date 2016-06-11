@@ -10,6 +10,9 @@ class ItemSuper:
 class Items:
     """
     Items class allows the ItemGetter to work properly
+    Each item gets a rarity which defines the drop chances
+    The randint function selects from 0 to drop chances
+    So the range should be between 1 - 1000
     """
     class Potion(ItemSuper):
         """
@@ -22,6 +25,7 @@ class Items:
             They return your vitality, and heal wounds that are superficial.\n
             Heals 5 health.
             """
+            self.rarity = 10
             self.effect_what = "health"
             self.effect_value = 5
     class PhilterOfStrength(ItemSuper):
@@ -29,8 +33,14 @@ class Items:
         test class
         """
         def __init__(self):
+            self.rarity = 25
             self.effect_what = "strength"
             self.effect_value = 5
+    class Hi_Potion(ItemSuper):
+        def __init__(self):
+            self.rarity = 15
+            self.effect_what = "health"
+            self.effect_value = 15
 
 class ItemGetter:
     def __init__(self):
@@ -50,6 +60,8 @@ class Character:
         self.strength = strength
         self.dexterity = dexterity
         self.stamina  = stamina
+        self.item_drop_classes = []
+        self.items_dropped = []
     def do_damage(self, enemy):
         first = round((random.gauss(self.level, 0.75) - random.gauss(enemy.level, 0.75) + (self.strength/3))-((enemy.dexterity/2)-(self.dexterity/2)))
         second = max(first, 0)
@@ -69,12 +81,21 @@ class Character:
             attr_val = getattr(self, effects_dict['attribute'])
             val = effects_dict['value']
             if effects_dict['attribute'] == "health":
-                val = self.health_max - self.health
+                if (self.health_max - self.health) > 5:
+                    val = 5
+                elif (self.health_max - self.health) < 5:
+                    val = self.health_max -self.health
             setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
         except AttributeError as e:
             print "Be sure to specify the correct item!"
-
-
+    def item_drop(self):
+        getter = ItemGetter()
+        for drop in self.drops:
+            self.item_drop_classes.append(getter.make_item(drop))
+        for items in self.item_drop_classes:
+            if random.randint(0, items.rarity) == 5:
+                self.items_dropped.append(items)
+        return self.items_dropped
 
     def encounter(self):
         pass
@@ -86,6 +107,7 @@ class Goblin(Character):
         self.gives_exp = 150
         self.gives_skill_points = 1
         self.can_probe = True
+        self.drops = ["Potion"]
 
 class Bear(Character):
     def __init__(self, player, name):
@@ -94,6 +116,7 @@ class Bear(Character):
         self.gives_exp = 170
         self.gives_skill_points = 2
         self.can_probe = True
+        self.drops = ["Potion", "Hi_potion"]
 
 class Demon(Character):
     def __init__(self, player, name):
@@ -102,6 +125,7 @@ class Demon(Character):
         self.gives_exp = 1500
         self.gives_skill_points = 3
         self.can_probe = False
+        self.drops = ["PhilterOfStrength", "Hi_Potion"]
 
 class Dragon(Character):
     def __init__(self, player, name):
@@ -123,6 +147,7 @@ class Player(Character):
         self.bag_of_holding = Container()
         self.bestiary = {}
         self.bag_of_holding.add_item("Potion")
+        self.bag_of_holding.add_item("PhilterOfStrength")
 
     def quit(self):
         print "%s can't find the way back home, and dies of starvation.\nR.I.P." % self.name
@@ -235,6 +260,8 @@ class Player(Character):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
                 self.exp += self.enemy.gives_exp
                 self.skill_points += self.enemy.gives_skill_points
+                for items in self.enemy.item_drop():
+                    self.bag_of_holding.add_item(items)
                 self.enemy = None
                 self.state = 'normal'
             else: self.enemy_attacks()
