@@ -234,8 +234,12 @@ class Player(Character):
 class Container:
     def __init__(self, items):
         self.contents = items.rsplit(",")
+
     def use_item(self, item):
+        import abilities_dicts
+        abilities_dicts.items_usage.item.effect()
         self.contents.pop(self.contents.index(item))
+
 
 class Map:
     def __init__(self, player, width, height, type_of):
