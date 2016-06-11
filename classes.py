@@ -2,7 +2,13 @@ import random
 
 #--------------------------------------------------------------------------------------Item Classes
 class Items:
+    """
+    Items class allows the ItemGetter to work properly
+    """
     class Potion:
+        """
+        Potions, yo
+        """
         def __init__(self):
             self.value = 50
             self.description = """
@@ -12,8 +18,11 @@ class Items:
             """
             self.effect_what = "health"
             self.effect_value = 5
-        def effect(self, attribute):
-            pass
+        def effect(self):
+            return {
+            'attribute': self.effect_what,
+            'value': self.effect_value,
+            }
 
 class ItemGetter:
     def __init__(self):
@@ -43,6 +52,14 @@ class Character:
         else:
             print "%s causes %d damage to %s!" % (self.name, damage, enemy.name)
         return enemy.health <= 0
+    def use_item(self, item):
+        """
+        item arg is a class instance of the item
+        """
+        effects_dict = item.effect()
+        val = effects_dict['value']
+        setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
+
     def encounter(self):
         pass
 
@@ -228,11 +245,11 @@ class Player(Character):
             print key
 
     def use(self, item):
-        self.bag_of_holding.use_item(item)
+        self.use_item(item)
 
     def specify(self):
-        self.item_to_use = raw_input("Which item?\n>")
-        self.use(self.item_to_use)
+        item_to_use = raw_input("Which item?\n>")
+        self.use(self.bag_of_holding.contents.get(item_to_use))
 
     def view_bestiary(self):
         for key in self.bestiary.keys():
@@ -261,17 +278,13 @@ class Player(Character):
 #---------------------------------------------------------------------------------extra classes
 
 class Container:
+    """
+    This is a holder class for various types of containers, such as the player's bag of holding.
+    It can also be used for chests and the like.
+    """
     def __init__(self):
         self.contents = {}
         self.getter = ItemGetter()
-
-    def use_item(self, item):
-        try:
-            to_use = self.contents.get(item)
-        except Exception as e:
-            print "That item is not in your inventory!"
-        print to_use.value
-
 
     def add_item(self, item):
         self.contents[item] = self.getter.make_item(item)
