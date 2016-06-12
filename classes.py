@@ -163,7 +163,7 @@ class Player(Character):
         Character.__init__(self, 1, 10, 10, 10, 7, 10)
         self.state = 'normal'
         self.has_levelled = False
-        self.position = [0,19]#change
+        self.position = [0,1]#change
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
