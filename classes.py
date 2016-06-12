@@ -25,22 +25,28 @@ class Items:
             They return your vitality, and heal wounds that are superficial.\n
             Heals 5 health.
             """
-            self.rarity = 10
+            #change rarity after test
+            self.rarity = 5
             self.effect_what = "health"
             self.effect_value = 5
+            self.item_string = "Potion"
     class PhilterOfStrength(ItemSuper):
         """
         test class
         """
         def __init__(self):
-            self.rarity = 25
+            #change rarity after test
+            self.rarity = 5
             self.effect_what = "strength"
             self.effect_value = 5
+            self.item_string = "PhilterOfStrength"
+            #change rarity after test
     class Hi_Potion(ItemSuper):
         def __init__(self):
-            self.rarity = 15
+            self.rarity = 5
             self.effect_what = "health"
             self.effect_value = 15
+            self.item_string = "Hi_Potion"
 
 class ItemGetter:
     def __init__(self):
@@ -72,6 +78,7 @@ class Character:
         else:
             print "%s causes %d damage to %s!" % (self.name, damage, enemy.name)
         return enemy.health <= 0
+
     def use_item(self, item):
         """
         item arg is a class instance of the item
@@ -80,21 +87,27 @@ class Character:
             effects_dict = item.effect()
             attr_val = getattr(self, effects_dict['attribute'])
             val = effects_dict['value']
+            if self.bag_of_holding.contents[item.item_string].quantity > 0:
+                self.bag_of_holding.contents[item.item_string].quantity -= 1
+            else:
+                print "You have no more %s!" % item.item_string
             if effects_dict['attribute'] == "health":
-                if (self.health_max - self.health) > 5:
-                    val = 5
+                if (self.health_max - self.health) > val:
+                    val = val
                 elif (self.health_max - self.health) < 5:
-                    val = self.health_max -self.health
+                    val = self.health_max - self.health
             setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
-        except AttributeError as e:
+
+        except AttributeError:
             print "Be sure to specify the correct item!"
+
     def item_drop(self):
         getter = ItemGetter()
         for drop in self.drops:
             self.item_drop_classes.append(getter.make_item(drop))
         for items in self.item_drop_classes:
-            if random.randint(0, items.rarity) == 5:
-                self.items_dropped.append(items)
+            if random.randint(5, items.rarity) == 5:
+                self.items_dropped.append(items.item_string)
         return self.items_dropped
 
     def encounter(self):
@@ -258,9 +271,10 @@ class Player(Character):
         else:
             if self.do_damage(self.enemy):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
+                item_array = self.enemy.item_drop()
                 self.exp += self.enemy.gives_exp
                 self.skill_points += self.enemy.gives_skill_points
-                for items in self.enemy.item_drop():
+                for items in item_array:
                     self.bag_of_holding.add_item(items)
                 self.enemy = None
                 self.state = 'normal'
@@ -295,16 +309,14 @@ class Player(Character):
             print "You have no items in your inventory!"
         else:
             for key in self.bag_of_holding.contents:
-                print key
+                print key, self.bag_of_holding.contents[key].quantity
 
     def use(self, item):
         self.use_item(item)
 
-
     def specify(self):
         item_to_use = raw_input("Which item?\n>")
         self.use(self.bag_of_holding.contents.get(item_to_use))
-        self.bag_of_holding.remove_item(item_to_use)
 
     def view_bestiary(self):
         for key in self.bestiary.keys():
@@ -341,11 +353,15 @@ class Container:
         self.contents = {}
         self.getter = ItemGetter()
 
-    def add_item(self, item):
+    def init_item(self, item):
         self.contents[item] = self.getter.make_item(item)
+        self.contents[item].quantity = 1
 
-    def remove_item(self, item):
-        del self.contents[item]
+    def add_item(self, item):
+        if item in self.contents:
+            self.contents[item].quantity += 1
+        else:
+            self.init_item(item)
 
 class Map:
     def __init__(self, player, width, height, type_of):
