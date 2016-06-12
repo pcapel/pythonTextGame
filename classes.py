@@ -39,7 +39,7 @@ class Items:
         """
         def __init__(self):
             #change rarity after test
-            self.rarity = 15
+            self.rarity = 7
             self.effect_what = "strength"
             self.effect_value = 5
             self.item_string = "PhilterOfStrength"
@@ -49,7 +49,7 @@ class Items:
             #change rarity after test
     class Hi_Potion(ItemSuper):
         def __init__(self):
-            self.rarity = 5
+            self.rarity = 3
             self.effect_what = "health"
             self.effect_value = 15
             self.item_string = "Hi_Potion"
@@ -162,6 +162,7 @@ class Player(Character):
     def __init__(self):
         Character.__init__(self, 1, 10, 10, 10, 7, 10)
         self.state = 'normal'
+        self.in_battle = False
         self.has_levelled = False
         self.position = [0,1]#change
         self.skill_points = 0
@@ -181,7 +182,7 @@ class Player(Character):
         if self.state == 'normal':
             for c in commands_dicts.Commands:
                 print c
-        elif self.state == 'fight':
+        elif self.in_battle:
             for c in commands_dicts.Battle_Commands:
                 print c
 
@@ -195,29 +196,24 @@ class Player(Character):
 
     def tired(self):
         print "%s feels tired." % self.name
-        self.health = max(1, self.health - 1)
+        self.state = "tired"
+        self.health_max = self.health_max - (self.health_max * 0.25)
+        self.strength = self.strength - (self.strength * 0.25)
+        self.dexterity = self.dexterity - (self.dexterity * 0.25)
 
     def rest(self):
-        if self.state != 'normal':
+        if self.in_battle:
             print "%s can't rest now!" % self.name; self.enemy_attacks()
         else:
             print "%s rests." % self.name
-            #deprecated
-            #if random.randint(0, 1) > 4:
-                #self.enemy = Enemy(self)
-                #print "%s is rudely awakened by %s!" % (self.name, self.enemy.name)
-                #self.state = 'fight'
-                #self.enemy_attacks()
+            self.state = 'normal'
 
-            if self.health < self.health_max:
-                self.health = self.health + 1
-            else: print "%s slept too much." % self.name; self.health = self.health - 1
 
     def explore(self):
         import bestiary_dicts
         direction = raw_input("Forward (f)/Backward(b)\n>")
         direction.lower()
-        if self.state != 'normal':
+        if self.in_battle:
             print "%s is too busy right now!" % self.name
             self.enemy_attacks()
         else:
@@ -242,14 +238,14 @@ class Player(Character):
         if random.randint(0, 1):
             #I think that I'm going to kill the enemy -> character inheritance and use an enemy superclass
             #this whole "switch" could be a dictionary of methods within the superclass
-            if self.position[1] <=10 :
+            if self.position[1] <=20 :
                 self.enemy = Goblin(self, "Goblin")
-            elif self.position[1] > 10 and self.position[1] <=20:
+            elif self.position[1] > 20 and self.position[1] <= 30:
                 if random.randint(1, 2) == 1:
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
-            elif self.position[1] > 20:
+            elif self.position[1] > 30 and self.position[1] <= 40:
                 if random.randint(1, 3) == 1:
                     self.enemy = Demon(self, "Demon")
                 elif random.randint(1, 3) == 2:
@@ -264,7 +260,7 @@ class Player(Character):
                 self.bestiary[self.enemy.name] = bestiary_dicts.Bestiary_Desc[self.enemy.name]
             else:
                 print "View your bestiary for a description of this foe."
-            self.state = 'fight'
+            self.in_battle = True
         else:
             if random.randint(0, self.stamina): self.tired()
         if (self.position[1] == 20) and (self.level < 10):
@@ -280,7 +276,8 @@ class Player(Character):
             """%self.name
 
     def flee(self):
-        if self.state != 'fight': print "%s runs in circles for a while." % self.name; self.tired()
+        if not self.in_battle:
+            print "%s runs in circles for a while." % self.name; self.tired()
         elif self.enemy.can_flee:
             if random.randint(1, self.health + 5) > random.randint(1, self.enemy.health):
                 print "%s flees from %s." % (self.name, self.enemy.name)
@@ -293,7 +290,7 @@ class Player(Character):
             """
 
     def attack(self):
-        if self.state != 'fight':
+        if not self.in_battle:
             print "%s swats the air, without notable results." % self.name; self.tired()
         else:
             if self.do_damage(self.enemy):

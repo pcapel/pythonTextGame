@@ -10,13 +10,13 @@ def make_player():
     args = line.split()
     if len(args) > 0:
       command_found = False
-      if p.state == 'normal':
+      if not p.in_battle:
         for c in commands_dicts.Commands.keys():
           if args[0] == c[:len(args[0])]:
             commands_dicts.Commands[c](p)
             command_found = True
             break
-      elif p.state == 'fight':
+      elif p.in_battle:
         for c in commands_dicts.Battle_Commands.keys():
           if args[0] == c[:len(args[0])]:
             commands_dicts.Battle_Commands[c](p)
