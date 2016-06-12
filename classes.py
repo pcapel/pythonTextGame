@@ -68,6 +68,7 @@ class Character:
         self.stamina  = stamina
         self.item_drop_classes = []
         self.items_dropped = []
+        self.can_flee = True
     def do_damage(self, enemy):
         first = round((random.gauss(self.level, 0.75) - random.gauss(enemy.level, 0.75) + (self.strength/3))-((enemy.dexterity/2)-(self.dexterity/2)))
         second = max(first, 0)
@@ -92,9 +93,7 @@ class Character:
             else:
                 print "You have no more %s!" % item.item_string
             if effects_dict['attribute'] == "health":
-                if (self.health_max - self.health) > val:
-                    val = val
-                elif (self.health_max - self.health) < 5:
+                if (self.health_max - self.health) < item.effect_value:
                     val = self.health_max - self.health
             setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
 
@@ -129,7 +128,7 @@ class Bear(Character):
         self.gives_exp = 170
         self.gives_skill_points = 2
         self.can_probe = True
-        self.drops = ["Potion", "Hi_potion"]
+        self.drops = ["Potion", "Hi_Potion"]
 
 class Demon(Character):
     def __init__(self, player, name):
@@ -147,6 +146,7 @@ class Dragon(Character):
         self.gives_exp = 30000
         self.gives_skill_points = 40
         self.can_probe = False
+        self.can_flee = False
 
 class Player(Character):
     def __init__(self):
@@ -246,6 +246,13 @@ class Player(Character):
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
+            elif self.position[1] == 40:
+                print """You can sense a strong being.\n
+                To continue further would surely mean that you must meet it in battle.
+                Tread lightly, %s, for the danger ahead is not one that you are liable to survive...
+                """%self.name
+            elif self.position[1] > 40:
+                self.enemy = Dragon(self, "Dragon of Ages")
             print "%s encounters a %s!" % (self.name, self.enemy.name)
             if self.enemy.name not in self.bestiary:
                 print bestiary_dicts.Bestiary_Desc[self.enemy.name]
@@ -258,12 +265,16 @@ class Player(Character):
 
     def flee(self):
         if self.state != 'fight': print "%s runs in circles for a while." % self.name; self.tired()
-        else:
+        elif self.enemy.can_flee:
             if random.randint(1, self.health + 5) > random.randint(1, self.enemy.health):
                 print "%s flees from %s." % (self.name, self.enemy.name)
                 self.enemy = None
                 self.state = 'normal'
             else: print "%s couldn't escape from %s!" % (self.name, self.enemy.name); self.enemy_attacks()
+        else:
+            print """Attempting to escape this enemy would surely lead to your demise!\n
+            You stay and fight for your life.
+            """
 
     def attack(self):
         if self.state != 'fight':
@@ -273,7 +284,8 @@ class Player(Character):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
                 item_array = self.enemy.item_drop()
                 self.exp += self.enemy.gives_exp
-                self.skill_points += self.enemy.gives_skill_points
+                if self.exp_to_next < self.enemy.gives_exp:
+                    self.skill_points += self.enemy.gives_skill_points
                 for items in item_array:
                     self.bag_of_holding.add_item(items)
                 self.enemy = None
@@ -290,8 +302,8 @@ class Player(Character):
                     self.has_levelled = True
 
     def enemy_attacks(self):
-        if self.enemy.do_damage(self): print "%s was slaughtered by %s!!!\nR.I.P." %(self.name, self.enemy.name)
-
+        if self.enemy.do_damage(self):
+            print "%s was slaughtered by %s!!!\nR.I.P." %(self.name, self.enemy.name)
     def locate(self):
         print "%s has travelled %d meters into the cave..." % (self.name, self.position[1])
 
