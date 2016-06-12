@@ -163,7 +163,7 @@ class Player(Character):
         Character.__init__(self, 1, 10, 10, 10, 7, 10)
         self.state = 'normal'
         self.has_levelled = False
-        self.position = [0,1]
+        self.position = [0,19]#change
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
@@ -249,10 +249,6 @@ class Player(Character):
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
-            elif (self.position[1] == 20) and (self.level < 10):
-                print """Your senses tingle, the way has become more dangerous.\n
-                Be wary of the way ahead, for it may be more than you're ready to handle.
-                """
             elif self.position[1] > 20:
                 if random.randint(1, 3) == 1:
                     self.enemy = Demon(self, "Demon")
@@ -260,11 +256,6 @@ class Player(Character):
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
-            elif self.position[1] == 40:
-                print """You can sense a strong being.\n
-                To continue further would surely mean that you must meet it in battle.
-                Tread lightly, %s, for the danger ahead is not one that you are liable to survive...
-                """%self.name
             elif self.position[1] > 40:
                 self.enemy = Dragon(self, "Dragon of Ages")
             print "%s encounters a %s!" % (self.name, self.enemy.name)
@@ -276,6 +267,15 @@ class Player(Character):
             self.state = 'fight'
         else:
             if random.randint(0, self.stamina): self.tired()
+        if (self.position[1] == 20) and (self.level < 10):
+            print """Your senses tingle, the way has become more dangerous.\n
+            Be wary of the way ahead, for it may be more than you're ready to handle.
+            """
+        elif self.position[1] == 40:
+            print """You can sense a strong being.\n
+            To continue further would surely mean that you must meet it in battle.
+            Tread lightly, %s, for the danger ahead is not one that you are liable to survive...
+            """%self.name
 
     def flee(self):
         if self.state != 'fight': print "%s runs in circles for a while." % self.name; self.tired()
@@ -362,7 +362,7 @@ class Player(Character):
             if choice == "s":
                 self.strength += 1
                 self.skill_points -= 1
-                print "You feel your strength increasing!""
+                print "You feel your strength increasing!"
             elif choice == "d":
                 self.dexterity += 1
                 self.skill_points -= 1
