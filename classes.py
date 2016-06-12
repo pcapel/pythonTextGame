@@ -75,10 +75,12 @@ class Character:
         self.strength = strength
         self.dexterity = dexterity
         self.stamina  = stamina
+        self.drops = []
         self.item_drop_classes = []
         self.items_dropped = []
         self.can_flee = True
         self.action_count = 0
+        
     def do_damage(self, enemy):
         first = round((random.gauss(self.level, 0.75) - random.gauss(enemy.level, 0.75) + (self.strength/3))-((enemy.dexterity/2)-(self.dexterity/2)))
         second = max(first, 0)
@@ -161,11 +163,11 @@ class Dragon(Character):
 
 class Player(Character):
     def __init__(self):
-        Character.__init__(self, 1, 10, 10, 10, 7, 10)
+        Character.__init__(self, 1, 100, 100, 100, 70, 100)#(self, 1, 10, 10, 10, 7, 10)
         self.state = 'normal'
         self.in_battle = False
         self.has_levelled = False
-        self.position = [0,1]#change
+        self.position = [0,19]#change
         self.skill_points = 0
         self.exp = 0
         self.exp_to_next = 50
@@ -194,6 +196,7 @@ class Player(Character):
         print "%s's health: %d/%d" % (self.name, self.health, self.health_max)
         print "%s's strength: %d" % (self.name, self.strength)
         print "%s's dexterity: %d" % (self.name, self.dexterity)
+        print "%s's stamina: %d" % (self.name, self.stamina)
         print "%s is feeling quite %s" % (self.name, self.state)
 
     def tired(self):
@@ -260,7 +263,7 @@ class Player(Character):
                 else:
                     self.enemy = Goblin(self, "Goblin")
             elif self.position[1] > 40:
-                self.enemy = Dragon(self, "Dragon of Ages")
+                self.enemy = Dragon(self, "Dragon")
             print "%s encounters a %s!" % (self.name, self.enemy.name)
             if self.enemy.name not in self.bestiary:
                 print bestiary_dicts.Bestiary_Desc[self.enemy.name]

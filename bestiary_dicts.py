@@ -20,5 +20,7 @@ quite a distance on the end of their long arms, and are large enough to rip a ma
 and are almost never found outside of the earth.  They reak of sulphur and are many times more powerful than all but the
 strongest warriors.  Those that encounter demons are rarely lucky enough to survive.  Because of that, the legends around
 their appearance are not all in agreement.  Some say that even looking at a demon is enough to cause you to burst into flames.
-Other legends mention the lack of a truly corporeal form, and say that they are simply masses of truly living darkness."""
+Other legends mention the lack of a truly corporeal form, and say that they are simply masses of truly living darkness.""",
+	'Dragon': """Dragons are the kings of the realm.  Their strength in magic and raw physical power are daunting.
+	to survive an encounter with one is enough to make you a king among men.  To kill one would make you a god.""",
 }
