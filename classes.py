@@ -30,6 +30,9 @@ class Items:
             self.effect_what = "health"
             self.effect_value = 5
             self.item_string = "Potion"
+            self.success = """
+            The potion resotres 5 health to the target!
+            """
     class PhilterOfStrength(ItemSuper):
         """
         test class
@@ -40,6 +43,9 @@ class Items:
             self.effect_what = "strength"
             self.effect_value = 5
             self.item_string = "PhilterOfStrength"
+            self.success = """
+            The Philter gives the target 5 extra strength points!
+            """
             #change rarity after test
     class Hi_Potion(ItemSuper):
         def __init__(self):
@@ -47,6 +53,9 @@ class Items:
             self.effect_what = "health"
             self.effect_value = 15
             self.item_string = "Hi_Potion"
+            self.success = """
+            Hi Potion restores 15 health points to the target!
+            """
 
 class ItemGetter:
     def __init__(self):
@@ -96,6 +105,7 @@ class Character:
                 if (self.health_max - self.health) < item.effect_value:
                     val = self.health_max - self.health
             setattr(self, effects_dict['attribute'], (getattr(self, effects_dict['attribute']) + val))
+            print item.success
 
         except AttributeError:
             print "Be sure to specify the correct item!"
@@ -239,6 +249,10 @@ class Player(Character):
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
+            elif self.position[1] == 20:
+                print """Your senses tingle, the way has become more dangerous.\n
+                Be wary of the way ahead, for it may be more than you're ready to handle.
+                """
             elif self.position[1] > 20:
                 if random.randint(1, 3) == 1:
                     self.enemy = Demon(self, "Demon")
@@ -284,7 +298,7 @@ class Player(Character):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
                 item_array = self.enemy.item_drop()
                 self.exp += self.enemy.gives_exp
-                if self.exp_to_next < self.enemy.gives_exp:
+                if (self.exp_to_next - self.exp) < self.enemy.gives_exp:
                     self.skill_points += self.enemy.gives_skill_points
                 for items in item_array:
                     print "%s receives %s" % (self.name, items)
