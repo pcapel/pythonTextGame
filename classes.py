@@ -268,11 +268,13 @@ class Player(Character):
         else:
             if random.randint(0, self.stamina): self.tired()
         if (self.position[1] == 20) and (self.level < 10):
-            print """Your senses tingle, the way has become more dangerous.\n
+            print """
+            Your senses tingle, the way has become more dangerous.\n
             Be wary of the way ahead, for it may be more than you're ready to handle.
             """
         elif self.position[1] == 40:
-            print """You can sense a strong being.\n
+            print """
+            You can sense a strong being.\n
             To continue further would surely mean that you must meet it in battle.
             Tread lightly, %s, for the danger ahead is not one that you are liable to survive...
             """%self.name
