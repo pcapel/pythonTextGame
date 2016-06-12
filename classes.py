@@ -26,7 +26,7 @@ class Items:
             Heals 5 health.
             """
             #change rarity after test
-            self.rarity = 5
+            self.rarity = 1
             self.effect_what = "health"
             self.effect_value = 5
             self.item_string = "Potion"
@@ -36,7 +36,7 @@ class Items:
         """
         def __init__(self):
             #change rarity after test
-            self.rarity = 5
+            self.rarity = 15
             self.effect_what = "strength"
             self.effect_value = 5
             self.item_string = "PhilterOfStrength"
@@ -105,7 +105,7 @@ class Character:
         for drop in self.drops:
             self.item_drop_classes.append(getter.make_item(drop))
         for items in self.item_drop_classes:
-            if random.randint(5, items.rarity) == 5:
+            if random.randint(0, items.rarity) == 1:
                 self.items_dropped.append(items.item_string)
         return self.items_dropped
 
@@ -287,6 +287,7 @@ class Player(Character):
                 if self.exp_to_next < self.enemy.gives_exp:
                     self.skill_points += self.enemy.gives_skill_points
                 for items in item_array:
+                    print "%s receives %s" % (self.name, items)
                     self.bag_of_holding.add_item(items)
                 self.enemy = None
                 self.state = 'normal'
