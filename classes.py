@@ -249,7 +249,7 @@ class Player(Character):
                     self.enemy = Bear(self, "Bear")
                 else:
                     self.enemy = Goblin(self, "Goblin")
-            elif self.position[1] == 20:
+            elif (self.position[1] == 20) and (self.level < 10):
                 print """Your senses tingle, the way has become more dangerous.\n
                 Be wary of the way ahead, for it may be more than you're ready to handle.
                 """
@@ -362,9 +362,11 @@ class Player(Character):
             if choice == "s":
                 self.strength += 1
                 self.skill_points -= 1
+                print "You feel your strength increasing!""
             elif choice == "d":
                 self.dexterity += 1
                 self.skill_points -= 1
+                print "Your dexterity has improved!"
             else:
                 print "You have not assigned your skill points."
                 return
