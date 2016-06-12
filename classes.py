@@ -78,6 +78,7 @@ class Character:
         self.item_drop_classes = []
         self.items_dropped = []
         self.can_flee = True
+        self.action_count = 0
     def do_damage(self, enemy):
         first = round((random.gauss(self.level, 0.75) - random.gauss(enemy.level, 0.75) + (self.strength/3))-((enemy.dexterity/2)-(self.dexterity/2)))
         second = max(first, 0)
@@ -193,6 +194,7 @@ class Player(Character):
         print "%s's health: %d/%d" % (self.name, self.health, self.health_max)
         print "%s's strength: %d" % (self.name, self.strength)
         print "%s's dexterity: %d" % (self.name, self.dexterity)
+        print "%s is feeling quite %s" % (self.name, self.state)
 
     def tired(self):
         print "%s feels tired." % self.name
@@ -207,10 +209,15 @@ class Player(Character):
         else:
             print "%s rests." % self.name
             self.state = 'normal'
+            self.health_max = self.health_max + (self.health_max * 0.3333)
+            self.strength = self.strength + (self.strength * 0.333333)
+            self.dexterity = self.dexterity + (self.dexterity * 0.3333333)
+
 
 
     def explore(self):
         import bestiary_dicts
+        self.action_count += 1
         direction = raw_input("Forward (f)/Backward(b)\n>")
         direction.lower()
         if self.in_battle:
@@ -262,7 +269,8 @@ class Player(Character):
                 print "View your bestiary for a description of this foe."
             self.in_battle = True
         else:
-            if random.randint(0, self.stamina): self.tired()
+            if self.action_count >= self.stamina:
+                self.tired()
         if (self.position[1] == 20) and (self.level < 10):
             print """
             Your senses tingle, the way has become more dangerous.\n
@@ -276,13 +284,15 @@ class Player(Character):
             """%self.name
 
     def flee(self):
+        self.action_count += 1
         if not self.in_battle:
-            print "%s runs in circles for a while." % self.name; self.tired()
+            print "%s runs in circles for a while." % self.name
+            self.tired()
         elif self.enemy.can_flee:
             if random.randint(1, self.health + 5) > random.randint(1, self.enemy.health):
                 print "%s flees from %s." % (self.name, self.enemy.name)
                 self.enemy = None
-                self.state = 'normal'
+                self.in_battle = False
             else: print "%s couldn't escape from %s!" % (self.name, self.enemy.name); self.enemy_attacks()
         else:
             print """Attempting to escape this enemy would surely lead to your demise!\n
@@ -290,8 +300,10 @@ class Player(Character):
             """
 
     def attack(self):
+        self.action_count += 1
         if not self.in_battle:
-            print "%s swats the air, without notable results." % self.name; self.tired()
+            print "%s swats the air, without notable results." % self.name
+            self.tired()
         else:
             if self.do_damage(self.enemy):
                 print "-----------%s executes %s!----------------" % (self.name, self.enemy.name)
@@ -303,7 +315,7 @@ class Player(Character):
                     print "%s receives %s" % (self.name, items)
                     self.bag_of_holding.add_item(items)
                 self.enemy = None
-                self.state = 'normal'
+                self.in_battle = False
             else: self.enemy_attacks()
             if self.exp >= self.exp_to_next:
                 self.health = self.health + 1
@@ -322,6 +334,7 @@ class Player(Character):
         print "%s has travelled %d meters into the cave..." % (self.name, self.position[1])
 
     def probe(self):
+        self.action_count += 1
         if self.state == 'normal':
             print "There doesn't seem to be anything to probe..."
         elif self.enemy.can_probe:
@@ -338,6 +351,7 @@ class Player(Character):
                 print key, self.bag_of_holding.contents[key].quantity
 
     def use(self, item):
+        self.action_count += 1
         self.use_item(item)
 
     def specify(self):
