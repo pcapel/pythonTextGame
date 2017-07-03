@@ -8,4 +8,6 @@ bit of javascript that I knew how to write, and I wasn't very good at that
 at all.
 
 All that said, I'll probably get back to this in the near future to update it
-according to all the new things that I know now.
+according to all the new things that I know now.  I'll probably create a new base
+for the old code so it's easy to check out the differences in what I've learned 
+how to do.
